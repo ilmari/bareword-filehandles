@@ -11,6 +11,21 @@
 # define hv_fetchs(hv, key, lval) hv_fetch(hv, key, strlen(key), lval)
 #endif /* !hv_fetchs */
 
+#define bareword_croak_unless_builtin(op, gv) \
+    THX_bareword_croak_unless_builtin(aTHX_ op, gv)
+STATIC void THX_bareword_croak_unless_builtin (pTHX_ const OP *op, const GV *gv) {
+    if (gv
+        && gv != PL_stdingv
+        && gv != PL_stderrgv
+        && gv != PL_defgv
+        && gv != PL_argvgv
+        && gv != PL_argvoutgv
+        && gv != gv_fetchpv("STDOUT", TRUE, SVt_PVIO)
+        && gv != gv_fetchpv("DATA", TRUE, SVt_PVIO)
+    )
+        croak("Use of bareword filehandle in %s", OP_DESC(op));
+}
+
 STATIC OP *bareword_filehandles_unary_check_op (pTHX_ OP *op, void *user_data) {
     SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles", 0);
     const OP *first;
@@ -26,7 +41,7 @@ STATIC OP *bareword_filehandles_unary_check_op (pTHX_ OP *op, void *user_data) {
 
     first = cUNOPx(op)->op_first;
     if (first && first->op_type == OP_GV)
-        croak("Use of bareword filehandle in %s", OP_DESC(op));
+        bareword_croak_unless_builtin(op, cGVOPx_gv(first));
 
     return op;
 }
@@ -40,7 +55,7 @@ STATIC OP *bareword_filehandles_stat_check_op (pTHX_ OP *op, void *user_data) {
         return op;
 
     if (op->op_flags & OPf_REF && cGVOPx_gv(op) != PL_defgv)
-	croak("Use of bareword filehandle in %s", OP_DESC(op));
+	bareword_croak_unless_builtin(op, cGVOPx_gv(op));
 
     return op;
 }
@@ -59,7 +74,7 @@ STATIC OP *bareword_filehandles_list_check_op (pTHX_ OP *op, void *user_data) {
     if (first && (first->op_type == OP_PUSHMARK || first->op_type == OP_NULL)
         && next && next->op_type == OP_GV
     ) {
-        croak("Use of bareword filehandle in %s", OP_DESC(op));
+        bareword_croak_unless_builtin(op, cGVOPx_gv(next));
     }
 
     return op;

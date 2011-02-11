@@ -15,8 +15,12 @@ foreach my $func (qw(
     socket socketpair bind connect listen accept shutdown getsockopt
     setsockopt getsockname getpeername
 )) {
-    eval "no bareword::filehandles; $func FOO";
+    eval "sub { no bareword::filehandles; $func BAREWORD }";
     like "$@", qr/^Use of bareword filehandle in \Q$func\E\b/, "$func BAREWORD dies";
+    foreach my $fh ("", qw(STDIN STDERR STDOUT DATA ARGV)) {
+        eval "sub { no bareword::filehandles; $func $fh }";
+        unlike "$@", qr/Use of bareword filehandle/, "$func $fh lives";
+    }
 }
 
 done_testing;

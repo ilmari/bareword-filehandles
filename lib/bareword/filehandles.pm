@@ -30,7 +30,11 @@ XSLoader::load(
 
 =head1 DESCRIPTION
 
-This module disables the use of bareword filehandles in a lexical scope.
+This module disables the use of bareword filehandles in a lexical scope,
+except for the following ones: C<STDIN>, C<STDOUT>, C<STDERR>, C<ARGV>,
+C<ARGVOUT>, C<DATA>.
+
+=back
 
 =method unimport
 
