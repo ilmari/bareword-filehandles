@@ -13,7 +13,7 @@ foreach my $func (qw(
     seekdir fileno ioctl opendir stat lstat -R -W -X -r -w -x -e -s -M
     -A -C -O -o -z -S -c -b -f -d -p -u -g -k -l -t -T -B send recv
     socket socketpair bind connect listen accept shutdown getsockopt
-    setsockopt getsockname getpeername
+    setsockopt getsockname getpeername truncate chdir
 )) {
     eval "sub { no bareword::filehandles; $func BAREWORD }";
     like "$@", qr/^Use of bareword filehandle in \Q$func\E\b/, "$func BAREWORD dies";

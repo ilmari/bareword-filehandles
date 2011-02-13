@@ -26,6 +26,18 @@ STATIC void THX_bareword_croak_unless_builtin (pTHX_ const OP *op, const GV *gv)
         croak("Use of bareword filehandle in %s", OP_DESC(op));
 }
 
+#define bareword_croak_unless_builtin_op(op, argop) \
+    THX_bareword_croak_unless_builtin_op(aTHX_ op, argop)
+STATIC void THX_bareword_croak_unless_builtin_op (pTHX_ const OP *op, const OP *argop) {
+    if (argop && argop->op_type == OP_GV)
+        bareword_croak_unless_builtin(op, cGVOPx_gv(argop));
+    else if (argop && argop->op_type == OP_CONST &&
+             (argop->op_private & OPpCONST_BARE)) {
+        const GV *gv = gv_fetchsv(cSVOPx(argop)->op_sv, 0, SVt_PVIO);
+        bareword_croak_unless_builtin(op, gv);
+    }
+}
+
 STATIC OP *bareword_filehandles_unary_check_op (pTHX_ OP *op, void *user_data) {
     SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles", 0);
     const OP *first;
@@ -35,13 +47,8 @@ STATIC OP *bareword_filehandles_unary_check_op (pTHX_ OP *op, void *user_data) {
     if (!hint || !SvOK(*hint))
         return op;
 
-    /* what, no kids? */
-    if (!(op->op_flags & OPf_KIDS))
-	return op;
-
-    first = cUNOPx(op)->op_first;
-    if (first && first->op_type == OP_GV)
-        bareword_croak_unless_builtin(op, cGVOPx_gv(first));
+    if (op->op_flags & OPf_KIDS)
+        bareword_croak_unless_builtin_op(op, cUNOPx(op)->op_first);
 
     return op;
 }
@@ -70,12 +77,8 @@ STATIC OP *bareword_filehandles_list_check_op (pTHX_ OP *op, void *user_data) {
         return op;
 
     first = cLISTOPx(op)->op_first;
-    next = first->op_sibling;
-    if (first && (first->op_type == OP_PUSHMARK || first->op_type == OP_NULL)
-        && next && next->op_type == OP_GV
-    ) {
-        bareword_croak_unless_builtin(op, cGVOPx_gv(next));
-    }
+    if (first && (first->op_type == OP_PUSHMARK || first->op_type == OP_NULL))
+        bareword_croak_unless_builtin_op(op, first->op_sibling);
 
     return op;
 }
@@ -101,6 +104,7 @@ BOOT:
     bareword_check(unary, OP_REWINDDIR);
     bareword_check(unary, OP_TELL);
     bareword_check(unary, OP_TELLDIR);
+    bareword_check(unary, OP_CHDIR);
 
     bareword_check(list, OP_ACCEPT);
     bareword_check(list, OP_BIND);
@@ -126,6 +130,7 @@ BOOT:
     bareword_check(list, OP_SYSREAD);
     bareword_check(list, OP_SYSSEEK);
     bareword_check(list, OP_SYSWRITE);
+    bareword_check(list, OP_TRUNCATE);
 
     bareword_check(stat, OP_STAT);
     bareword_check(stat, OP_LSTAT);
