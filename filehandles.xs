@@ -69,19 +69,23 @@ STATIC OP *bareword_filehandles_stat_check_op (pTHX_ OP *op, void *user_data) {
 
 STATIC OP *bareword_filehandles_list_check_op (pTHX_ OP *op, void *user_data) {
     SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles", 0);
-    const OP *first, *next;
-
-    PERL_UNUSED_ARG(user_data);
+    const OP *first;
+    int num_args = user_data ? *(int*)user_data : 1;
 
     if (!hint || !SvOK(*hint))
         return op;
 
     first = cLISTOPx(op)->op_first;
-    if (first && (first->op_type == OP_PUSHMARK || first->op_type == OP_NULL))
-        bareword_croak_unless_builtin_op(op, first->op_sibling);
+    if (first && (first->op_type == OP_PUSHMARK || first->op_type == OP_NULL)) {
+	OP *check = first;
+	while(num_args-- && (check = check->op_sibling))
+	    bareword_croak_unless_builtin_op(op, check);
+    }
 
     return op;
 }
+
+STATIC const int bareword_filehandles_two = 2;
 
 MODULE = bareword::filehandles PACKAGE = bareword::filehandles
 
@@ -89,6 +93,10 @@ PROTOTYPES: ENABLE
 
 #define bareword_check(type, op) \
     hook_op_check(op, bareword_filehandles_##type##_check_op, NULL);
+
+#define bareword_check_list2(op) \
+    hook_op_check(op, bareword_filehandles_list_check_op, \
+		  (void*)&bareword_filehandles_two);
 
 BOOT:
     bareword_check(unary, OP_CLOSE);
@@ -106,7 +114,6 @@ BOOT:
     bareword_check(unary, OP_TELLDIR);
     bareword_check(unary, OP_CHDIR);
 
-    bareword_check(list, OP_ACCEPT);
     bareword_check(list, OP_BIND);
     bareword_check(list, OP_BINMODE);
     bareword_check(list, OP_CONNECT);
@@ -125,12 +132,14 @@ BOOT:
     bareword_check(list, OP_SEND);
     bareword_check(list, OP_SHUTDOWN);
     bareword_check(list, OP_SOCKET);
-    bareword_check(list, OP_SOCKPAIR);
     bareword_check(list, OP_SSOCKOPT);
     bareword_check(list, OP_SYSREAD);
     bareword_check(list, OP_SYSSEEK);
     bareword_check(list, OP_SYSWRITE);
     bareword_check(list, OP_TRUNCATE);
+    bareword_check_list2(OP_ACCEPT);
+    bareword_check_list2(OP_PIPE_OP);
+    bareword_check_list2(OP_SOCKPAIR);
 
     bareword_check(stat, OP_STAT);
     bareword_check(stat, OP_LSTAT);
