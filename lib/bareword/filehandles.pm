@@ -30,11 +30,9 @@ XSLoader::load(
 
 =head1 DESCRIPTION
 
-This module disables the use of bareword filehandles in a lexical scope,
-except for the following ones: C<STDIN>, C<STDOUT>, C<STDERR>, C<ARGV>,
-C<ARGVOUT>, C<DATA>.
-
-=back
+This module lexically disables the use of bareword filehandles with
+builtin functions, except for the special builitin filehandles C<STDIN>,
+C<STDOUT>, C<STDERR>, C<ARGV>, C<ARGVOUT> and C<DATA>.
 
 =method unimport
 
@@ -48,7 +46,7 @@ sub unimport { $^H |= 0x20000; $^H{+(__PACKAGE__)} = 1 }
 =method import
 
 Enables bareword filehandles for the remainder of the scope being
-compiled;
+compiled.
 
 =cut
 
