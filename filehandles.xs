@@ -61,7 +61,7 @@ STATIC OP *bareword_filehandles_stat_check_op (pTHX_ OP *op, void *user_data) {
     if (!hint || !SvOK(*hint))
         return op;
 
-    if (op->op_flags & OPf_REF && cGVOPx_gv(op) != PL_defgv)
+    if (op->op_flags & OPf_REF)
 	bareword_croak_unless_builtin(op, cGVOPx_gv(op));
 
     return op;
