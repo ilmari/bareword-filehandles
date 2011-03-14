@@ -11,6 +11,10 @@
 # define hv_fetchs(hv, key, lval) hv_fetch(hv, key, strlen(key), lval)
 #endif /* !hv_fetchs */
 
+#ifndef gv_fetchsv
+#define gv_fetchsv(name, flags, sv_type) gv_fetchpv(SvPV_nolen_const(name), flags, sv_type)
+#endif /* !gv_fetchsv */
+
 #define bareword_croak_unless_builtin(op, gv) \
     THX_bareword_croak_unless_builtin(aTHX_ op, gv)
 STATIC void THX_bareword_croak_unless_builtin (pTHX_ const OP *op, const GV *gv) {
