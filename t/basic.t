@@ -16,6 +16,7 @@ foreach my $func (qw(
     setsockopt getsockname getpeername truncate chdir pipe
 )) {
     eval "sub { no bareword::filehandles; $func BAREWORD }";
+    $@ =~ s/-([oO])/"-".chr(ord($1)^0x20)/e if "$]" < 5.008008; # workaround Perl RT#36672
     like "$@", qr/^Use of bareword filehandle in \Q$func\E\b/, "$func BAREWORD dies";
     foreach my $fh ("", qw(STDIN STDERR STDOUT DATA ARGV)) {
         eval "sub { no bareword::filehandles; $func $fh }";
