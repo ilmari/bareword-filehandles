@@ -31,7 +31,7 @@ XSLoader::load(
 =head1 DESCRIPTION
 
 This module lexically disables the use of bareword filehandles with
-builtin functions, except for the special builitin filehandles C<STDIN>,
+builtin functions, except for the special builtin filehandles C<STDIN>,
 C<STDOUT>, C<STDERR>, C<ARGV>, C<ARGVOUT> and C<DATA>.
 
 =method unimport
