@@ -48,7 +48,7 @@ STATIC void THX_bareword_croak_unless_builtin_op (pTHX_ CONST OP *op, const OP *
 }
 
 STATIC OP *bareword_filehandles_unary_check_op (pTHX_ OP *op, void *user_data) {
-    SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles", 0);
+    SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles/disabled", 0);
 
     PERL_UNUSED_ARG(user_data);
 
@@ -62,7 +62,7 @@ STATIC OP *bareword_filehandles_unary_check_op (pTHX_ OP *op, void *user_data) {
 }
 
 STATIC OP *bareword_filehandles_stat_check_op (pTHX_ OP *op, void *user_data) {
-    SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles", 0);
+    SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles/disabled", 0);
 
     PERL_UNUSED_ARG(user_data);
 
@@ -76,7 +76,7 @@ STATIC OP *bareword_filehandles_stat_check_op (pTHX_ OP *op, void *user_data) {
 }
 
 STATIC OP *bareword_filehandles_list_check_op (pTHX_ OP *op, void *user_data) {
-    SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles", 0);
+    SV **hint = hv_fetchs(GvHV(PL_hintgv), "bareword::filehandles/disabled", 0);
     OP *child;
     int num_args = user_data ? *(int*)user_data : 1;
 
