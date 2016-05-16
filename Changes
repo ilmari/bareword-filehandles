@@ -3,6 +3,7 @@ Revision history for bareword::filehandles
 {{$NEXT}}
  - fix POD typo (RT#76421)
  - Use "bareword::filehandles/disabled" as the hint hash key
+ - Fix building on -DPERL_OP_PARENT perls (RT#114394)
 
 0.003     2011-03-15 13:03:07 Europe/London
  - use ppport.h for backwards compatibility
