@@ -8,6 +8,7 @@ Makefile
 *#
 *.bs
 pm_to_blib
+ppport.h
 blib/
 bareword-filehandles-*/
 bareword-filehandles-*.tar.gz

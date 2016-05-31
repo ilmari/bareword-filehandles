@@ -16,15 +16,6 @@
 #define CONST /**/
 #endif
 
-#ifndef gv_fetchsv
-#define gv_fetchsv(name, flags, sv_type) gv_fetchpv(SvPV_nolen_const(name), flags, sv_type)
-#endif /* !gv_fetchsv */
-
-#ifndef OpSIBLING
-# define OpSIBLING(o)		(0 + (o)->op_sibling)
-#endif /* !OpSIBLING */
-
-
 #define bareword_croak_unless_builtin(op, gv) \
     THX_bareword_croak_unless_builtin(aTHX_ op, gv)
 STATIC void THX_bareword_croak_unless_builtin (pTHX_ CONST OP *op, const GV *gv) {
