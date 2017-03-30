@@ -11,6 +11,6 @@ Devel::PPPort::WriteFile();
 our %WriteMakefileArgs = (
     NAME => 'bareword::filehandles',
 );
-do 'Makefile.depends' or die "Can't do Makefile.depends: " . ($@ || $!);
+do './Makefile.depends' or die "Can't do Makefile.depends: " . ($@ || $!);
 
 WriteMakefile(%WriteMakefileArgs);
