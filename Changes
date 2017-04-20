@@ -1,6 +1,8 @@
 Revision history for bareword::filehandles
 
 {{$NEXT}}
+
+0.005     2017-04-20 16:27:24+01:00 Europe/London
  - Switch to Dist::Zilla::PluginBundle::Starter
    and ::Plugin::DymamicPrereqs
  - Use Devel::PPPort insted of hand-rolled compat macros
