@@ -5,7 +5,7 @@ package bareword::filehandles;
 use strict;
 use warnings;
 
-use Lexical::SealRequireHints;
+use if "$]" < 5.012, 'Lexical::SealRequireHints';
 use B::Hooks::OP::Check;
 use XSLoader;
 

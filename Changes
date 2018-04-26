@@ -1,6 +1,7 @@
 Revision history for bareword::filehandles
 
 {{$NEXT}}
+ - Only depend on Lexical::SealRequireHints before 5.12
 
 0.005     2017-04-20 16:27:24+01:00 Europe/London
  - Switch to Dist::Zilla::PluginBundle::Starter
