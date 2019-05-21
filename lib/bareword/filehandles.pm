@@ -52,6 +52,12 @@ compiled.
 
 sub import { delete $^H{__PACKAGE__.'/disabled'} }
 
+=head1 LIMITATIONS
+
+L<Filetest operators|perlfunc/-X> (C<-X>) can not be checked on Perl
+versions before 5.32, because hooking the op check function for these
+breaks stacked tests, e.g. C<-f -w -x $file>.
+
 =head1 SEE ALSO
 
 L<perlfunc>,

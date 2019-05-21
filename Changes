@@ -1,6 +1,7 @@
 Revision history for bareword::filehandles
 
 {{$NEXT}}
+ - Disable checking filetest ops on perl < 5.31.1 (RT#127073)
 
 0.006     2018-04-26 22:36:49+01:00 Europe/London
  - Only use Lexical::SealRequireHints before perl 5.12
