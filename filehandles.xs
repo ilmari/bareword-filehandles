@@ -4,11 +4,13 @@
 #include "hook_op_check.h"
 #include "ppport.h"
 
-#define PERL_VERSION_DECIMAL(r,v,s) (r*1000000 + v*1000 + s)
-#define PERL_DECIMAL_VERSION \
+#ifndef PERL_VERSION_GE
+#  define PERL_VERSION_DECIMAL(r,v,s) (r*1000000 + v*1000 + s)
+#  define PERL_DECIMAL_VERSION \
 	PERL_VERSION_DECIMAL(PERL_REVISION,PERL_VERSION,PERL_SUBVERSION)
-#define PERL_VERSION_GE(r,v,s) \
+#  define PERL_VERSION_GE(r,v,s) \
 	(PERL_DECIMAL_VERSION >= PERL_VERSION_DECIMAL(r,v,s))
+#endif
 
 #if PERL_VERSION_GE(5,9,2)
 #define CONST const
